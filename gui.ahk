@@ -25,7 +25,9 @@ getControlVariableName(variableName) {
 }
 
 ; display the GUI
-Gui, New
+Gui, New, , Main
+_Gui_ := A_DefaultGui
+Gui, +Hwnd_Hwnd_
 
 ; print Fx keys
 fsCurrentX := startX
@@ -93,11 +95,16 @@ for index, keyName in thirdRowLetterKeys {
   thirdRowLettersCurrentX := thirdRowLettersCurrentX + 40
 }
 
-; Print the button
+; Print the activate button
 activateButtonCurrentY := firstRowLettersCurrentY - 3
 activateButtonText := "Activate"
 
 Gui, Add, Button, x%firstRowLettersCurrentX% y%activateButtonCurrentY% vActivateButton, Activate
+
+; Print the toggle activate help text
+helpTextCurrentY := secondRowLettersCurrentY
+
+Gui, Add, Text, x%firstRowLettersCurrentX% y%helpTextCurrentY%, press "Home" key to activate/deactivate
 
 ; Display the GUI
 Gui, Show, , AHK Spammer
@@ -147,16 +154,25 @@ enableKeys(params*) {
   }
 }
 
+$Home::
+  Gui, %_Gui_%: Default
+  gosub ButtonActivate
+Return
+
 ButtonActivate:
   Gui, Submit, NoHide
 
   isActive := !isActive
 
-  GuiControl, , ActivateButton, % isActive ? "Deactivate" : "Activate"
+  GuiControl, Text, ActivateButton, % isActive ? "Deactivate" : "Activate"
 
   if (isActive) {
     disableKeys(fKeys, numberKeys, firstRowLetterKeys, secondRowLetterKeys, thirdRowLetterKeys)
   } else {
     enableKeys(fKeys, numberKeys, firstRowLetterKeys, secondRowLetterKeys, thirdRowLetterKeys)
   }
+Return
+
+GuiClose:
+  ExitApp
 Return

@@ -1,3 +1,5 @@
+#MaxHotkeysPerInterval 140
+
 SetMouseDelay, -1
 SetKeyDelay, -1, -1
 
@@ -104,10 +106,14 @@ Return
 activateKeySpam(keyName) {
   global isActive
 
-  if (isActive) {
+  variableName := getControlVariableName(keyName)
+
+  if (isActive && %variableName%) {
     Send, %keyName%
     Sleep, 20
     MouseClick, Left
+  } else {
+    Hotkey, %keyName%, Off
   }
 }
 
